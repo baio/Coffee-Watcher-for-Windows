@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace CoffeeWatcher
 {
@@ -17,9 +18,6 @@ namespace CoffeeWatcher
             watcher.Filter = "*.coffee";
             watcher.NotifyFilter = NotifyFilters.LastWrite;
             watcher.Changed += new FileSystemEventHandler(watcher_Changed);
-            watcher.Deleted += new FileSystemEventHandler(watcher_Deleted);
-            watcher.Renamed += new RenamedEventHandler(watcher_Renamed);
-            watcher.Created += new FileSystemEventHandler(watcher_Created);
 
             watcher.EnableRaisingEvents = true;
 
@@ -34,7 +32,7 @@ namespace CoffeeWatcher
         private static void Log(string Message, bool Error = false)
         {
             if (Error)
-                Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = ConsoleColor.Blue;
 
             Console.WriteLine(Message);
 
@@ -67,31 +65,22 @@ namespace CoffeeWatcher
             }
 
             if (string.IsNullOrEmpty(res))
+            {
                 res = string.Format("File {0} successfully compiled", FileName);
+                Log(res);
+            }
             else
-                res = string.Format("File {0} compilation failed:\n{1}", FileName, res);
+            {
+                Log(string.Format("File {0} compilation failed", FileName), true);
+                Log(res);
+            }
 
-            Log(res);
-        }
-
-        static void watcher_Created(object sender, FileSystemEventArgs e)
-        {
-            Compile(e.FullPath);
+            
         }
 
         static void watcher_Changed(object sender, FileSystemEventArgs e)
         {
             Compile(e.FullPath);
         }
-
-        static void watcher_Renamed(object sender, RenamedEventArgs e)
-        {
-        }
-
-        static void watcher_Deleted(object sender, FileSystemEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
     }
 }
