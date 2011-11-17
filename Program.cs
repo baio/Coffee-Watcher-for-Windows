@@ -17,6 +17,7 @@ namespace CoffeeWatcher
             watcher.Path = Directory.GetCurrentDirectory() + "\\";
             watcher.Filter = "*.coffee";
             watcher.NotifyFilter = NotifyFilters.LastWrite;
+            watcher.IncludeSubdirectories = true;
             watcher.Changed += new FileSystemEventHandler(watcher_Changed);
 
             watcher.EnableRaisingEvents = true;
